@@ -7,13 +7,15 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 	<!-- 引入db.properties -->	
-	<context:property-placeholder location="classpath:db.properties" system-properties-mode="FALLBACK"/>	
+	  <bean id="placeholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations" value="classpath:db.properties"></property>
+    </bean>
 	
 	<!-- 声明dataSource -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<!-- 注入数据连接 -->
-		<property name="driverClass" value="${jdbc.driverClass}"></property>
-		<property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+		<property name="url" value="${jdbc.url}"></property>
 		<property name="username" value="${jdbc.username}"></property>
 		<property name="password" value="${jdbc.password}"></property>
 	</bean>
@@ -22,19 +24,19 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- 注入数据源 -->
 		<property name="dataSource" ref="dataSource"></property>
-		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
 		<!-- 注入mapper.xml -->
 		<property name="mapperLocations">
 			<array>
-				<value>classpath:mapper/*/Mapper.xml</value>
+				<value>classpath:mapper/*/*Mapper.xml</value>
 			</array>
 		</property>
 		<!-- 插件 -->
-		<property name="mapperLocations">
+		<!-- <property name="plugins">
 			<array>
 				<bean class="com.github.pagehelper.PageInterceptor"></bean>
 			</array>
-		</property>
+		</property> -->
 	</bean>
 	
 	<!-- 扫描mapper接口 -->
