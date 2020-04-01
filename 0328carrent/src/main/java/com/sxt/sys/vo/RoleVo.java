@@ -1,8 +1,8 @@
 package com.sxt.sys.vo;
 
-import com.sxt.sys.domain.Menu;
+import com.sxt.sys.domain.Role;
 
-public class MenuVo  extends Menu{
+public class RoleVo extends Role{
 	
 	/**
 	 * 分页参数
@@ -10,6 +10,15 @@ public class MenuVo  extends Menu{
 	private Integer page;
 	private Integer limit;
 	
+	//用于接收多个角色id
+	private Integer[] ids;
+	
+	public Integer[] getIds() {
+		return ids;
+	}
+	public void setIds(Integer[] ids) {
+		this.ids = ids;
+	}
 	public Integer getPage() {
 		return page;
 	}
@@ -22,7 +31,5 @@ public class MenuVo  extends Menu{
 	public void setLimit(Integer limit) {
 		this.limit = limit;
 	}
-	
-	
 	
 }

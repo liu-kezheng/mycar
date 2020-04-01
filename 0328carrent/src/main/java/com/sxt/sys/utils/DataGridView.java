@@ -44,4 +44,10 @@ public class DataGridView {
 	public DataGridView() {
 		// TODO Auto-generated constructor stub
 	}
+	public DataGridView(Long count, Object data) {
+		super();
+		this.count = count;
+		this.data = data;
+	}
+	
 }

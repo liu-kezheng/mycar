@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html> 
 <head>
 	<meta charset="utf-8">
 	<title>菜单管理</title>
@@ -37,7 +37,7 @@
 		  dataStyle: "layuiStyle",  //使用layui风格的数据格式
 	      response:{message:"msg",statusCode:0},  //修改response中返回数据的定义
           dataFormat: "list",  //配置data的风格为list
-          url: "${ctx}/menu/loadMenuManagerLeftTreeJson.action" // 使用url加载（可与data加载同时存在）
+          url: "${ctx}/menu/loadMenuManagerLeftTreeJson.action?spread=1" // 使用url加载（可与data加载同时存在）
 	    });
 		 
 		 //监听树的节点点击 事件

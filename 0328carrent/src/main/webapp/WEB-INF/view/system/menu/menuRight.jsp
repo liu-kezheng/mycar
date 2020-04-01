@@ -50,7 +50,6 @@
 	<table class="layui-hide" id="menuTable" lay-filter="menuTable"></table>
 	<div style="display: none;" id="menuToolBar">
 		    <button type="button" class="layui-btn layui-btn-sm" lay-event="add">增加</button>
-		    <button type="button" class="layui-btn layui-btn-sm" lay-event="batchDelete">批量删除</button>
 	</div>
 	<div  id="menuBar" style="display: none;">
 	  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -62,7 +61,7 @@
 	<div style="display: none;padding: 20px" id="saveOrUpdateDiv" >
 		<form class="layui-form"  lay-filter="dataFrm" id="dataFrm">
 			<div class="layui-form-item">
-				  <label class="layui-form-label">父给菜单：</label>
+				  <label class="layui-form-label">父级菜单：</label>
 				   <div class="layui-input-block">
 				      <div class="layui-unselect layui-form-select" id="pid_div">
 				        <div class="layui-select-title">
@@ -190,9 +189,6 @@
 				    case 'add':
 				      openAddMenu();
 				    break;
-				    case 'batchDelete':
-				      layer.msg('批量删除');
-				    break;
 				  };
 			})
 			//监听行工具事件
@@ -200,14 +196,26 @@
 			   var data = obj.data; //获得当前行数据
 			   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
 			  if(layEvent === 'del'){ //删除
-				 layer.msg("删除");
-			     layer.confirm('真的删除行么', function(index){
-			       layer.close(index);
-			       //向服务端发送删除指令
-			     });
+				  $.post("${ctx}/menu/checkMenuHasChildren.action?id="+data.id, function(obj){
+					  if(obj.code>=0){
+						  layer.msg("当前菜单有子节点,请求先删除字节点");
+					  }else{
+					     layer.confirm('真的删除【'+data.title+'】这个菜单吗', function(index){
+					       //向服务端发送删除指令
+					       $.post("${ctx}/menu/deleteMenu.action", {id:data.id}, function(res){
+					    	   layer.msg(res.msg); 
+					    	 	//刷新数据 表格
+								tableIns.reload();
+								//刷新左边的树
+								window.parent.left.menuTree.reload();
+								//刷新添加和修改的下拉树
+								menuTree.reload();
+					       })
+					     });
+					  }
+				  })
 			   } else if(layEvent === 'edit'){ //编辑
-			     //do something
-				   layer.msg("修改")
+				   openUpdateMenu(data);
 			   }
 			 });
 			
@@ -238,6 +246,13 @@
 					success:function(index){
 						form.val("dataFrm",data);
 						url="${ctx}/menu/updateMenu.action";
+						//反选下拉树
+						var pid = data.pid;
+						var params = dtree.dataInit("menuTree", pid);
+						//移出打开的样式
+						$("#menuSelectDiv").removeClass("layui-show");
+						//给下拉框的text框赋值
+						$("#pid_str").val(params.context);
 					}
 				});
 			}
@@ -252,7 +267,7 @@
 					//刷新数据 表格
 					tableIns.reload();
 					//刷新左边的树
-					//window.parent.left.menuTree.reload();
+					window.parent.left.menuTree.reload();
 					//刷新添加和修改的下拉树
 					menuTree.reload();
 				})
